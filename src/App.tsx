@@ -11,6 +11,9 @@ import Dashboard from "./pages/Dashboard";
 import Topics from "./pages/Topics";
 import Essays from "./pages/Essays";
 import Leaderboard from "./pages/Leaderboard";
+import Countdowns from "./pages/Countdowns";
+import Settings from "./pages/Settings";
+import AdminUsers from "./pages/AdminUsers";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +30,11 @@ const App = () => (
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/topics" element={<ProtectedRoute><Topics /></ProtectedRoute>} />
           <Route path="/essays" element={<ProtectedRoute><Essays /></ProtectedRoute>} />
+          <Route path="/countdowns" element={<ProtectedRoute><Countdowns /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+          <Route path="/admin/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
