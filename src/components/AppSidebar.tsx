@@ -1,5 +1,5 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { Gauge, BookOpen, FileText, Trophy, LogOut, CalendarDays, Users, Settings } from "lucide-react";
+import { Gauge, BookOpen, FileText, Trophy, LogOut, CalendarDays, Users, Settings, Calendar } from "lucide-react";
 import { SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ const items = [
   { title: "Dashboard", url: "/dashboard", icon: Gauge },
   { title: "Tópicos", url: "/topics", icon: BookOpen },
   { title: "Redações", url: "/essays", icon: FileText },
+  { title: "Relatórios", url: "/reports", icon: Calendar },
   { title: "Contagens", url: "/countdowns", icon: CalendarDays },
   { title: "Configurações", url: "/settings", icon: Settings },
   { title: "Usuários (Admin)", url: "/admin/users", icon: Users },

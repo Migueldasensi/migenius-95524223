@@ -14,6 +14,7 @@ import Leaderboard from "./pages/Leaderboard";
 import Countdowns from "./pages/Countdowns";
 import Settings from "./pages/Settings";
 import AdminUsers from "./pages/AdminUsers";
+import WeeklyReports from "./pages/WeeklyReports";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/essays" element={<ProtectedRoute><Essays /></ProtectedRoute>} />
           <Route path="/countdowns" element={<ProtectedRoute><Countdowns /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><WeeklyReports /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
           <Route path="/admin/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />

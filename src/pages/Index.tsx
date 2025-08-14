@@ -59,9 +59,9 @@ const Index = () => {
         <h1 className="text-4xl font-bold">Bem-vindo(a)!</h1>
         <p className="text-xl text-muted-foreground">Você está autenticado{email ? ` como ${email}` : ""}.</p>
         <div className="flex items-center justify-center gap-3 flex-wrap">
-          <Link to="/dashboard" className="underline">Ir ao Dashboard</Link>
-          <Link to="/topics" className="underline">Ver Tópicos</Link>
-          <Link to="/auth" className="underline">Ir para Login/Signup</Link>
+          <Button asChild>
+            <Link to="/dashboard">Ir ao Dashboard</Link>
+          </Button>
           <Button
             variant="secondary"
             onClick={async () => {

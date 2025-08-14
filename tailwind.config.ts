@@ -61,6 +61,17 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				migenius: {
+					'gradient-from': 'hsl(var(--migenius-gradient-from))',
+					'gradient-to': 'hsl(var(--migenius-gradient-to))',
+					'difficulty-easy': 'hsl(var(--migenius-difficulty-easy))',
+					'difficulty-medium': 'hsl(var(--migenius-difficulty-medium))',
+					'difficulty-hard': 'hsl(var(--migenius-difficulty-hard))',
+					'purple-light': 'hsl(var(--migenius-purple-light))',
+					'green-light': 'hsl(var(--migenius-green-light))',
+					'yellow-light': 'hsl(var(--migenius-yellow-light))',
+					'red-light': 'hsl(var(--migenius-red-light))'
 				}
 			},
 			borderRadius: {
