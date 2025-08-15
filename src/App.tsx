@@ -16,6 +16,8 @@ import Countdowns from "./pages/Countdowns";
 import Settings from "./pages/Settings";
 import AdminUsers from "./pages/AdminUsers";
 import WeeklyReports from "./pages/WeeklyReports";
+import IANutricional from "./pages/IANutricional";
+import RankingEstudos from "./pages/RankingEstudos";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +41,8 @@ const App = () => {
           <Route path="/topics" element={<ProtectedRoute><Topics /></ProtectedRoute>} />
           <Route path="/essays" element={<ProtectedRoute><Essays /></ProtectedRoute>} />
           <Route path="/countdowns" element={<ProtectedRoute><Countdowns /></ProtectedRoute>} />
+          <Route path="/ia-nutricional" element={<ProtectedRoute><IANutricional /></ProtectedRoute>} />
+          <Route path="/ranking-estudos" element={<ProtectedRoute><RankingEstudos /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/reports" element={<ProtectedRoute><WeeklyReports /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
