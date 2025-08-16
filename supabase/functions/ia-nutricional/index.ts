@@ -38,20 +38,34 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `Você é um professor especialista em correção de redações. Analise a redação a seguir e forneça:
+    const prompt = `Você é um professor especialista em correção de redações do ENEM. Analise a redação a seguir e forneça uma correção completa.
 
-1. **Nota (0-10)**: Uma nota justa baseada nos critérios de avaliação
-2. **Pontos Fortes**: O que está bem feito na redação
-3. **Pontos a Melhorar**: Áreas que precisam de desenvolvimento
-4. **Correções Específicas**: Erros de gramática, ortografia, pontuação
-5. **Sugestões**: Como melhorar a estrutura, argumentação e coesão
-6. **Comentários Motivacionais**: Incentive o estudante a continuar praticando
+**IMPORTANTE**: Comece sua resposta OBRIGATORIAMENTE com a nota numérica em uma das seguintes formas:
+- "NOTA: [número de 0 a 1000]"
+- "Nota: [número de 0 a 1000]"
+- "SCORE: [número de 0 a 1000]"
+
+**Critérios de avaliação ENEM (0-1000 pontos):**
+1. **Competência 1**: Domínio da modalidade escrita formal da língua portuguesa (0-200)
+2. **Competência 2**: Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento (0-200)
+3. **Competência 3**: Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos (0-200)
+4. **Competência 4**: Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação (0-200)
+5. **Competência 5**: Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos (0-200)
 
 **Redação para análise:**
 ${content}
 
 **Formato da resposta:**
-Forneça uma análise detalhada e construtiva, sempre com tom encorajador e educativo.`;
+NOTA: [número de 0 a 1000]
+
+**Análise detalhada:**
+1. **Pontos Fortes**
+2. **Pontos a Melhorar**
+3. **Correções Específicas**
+4. **Sugestões de Melhoria**
+5. **Comentários Motivacionais**
+
+Forneça uma análise detalhada, construtiva e sempre com tom encorajador.`;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
