@@ -150,8 +150,9 @@ export default function RankingEstudos() {
 
   const startStudy = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error("Erro de autenticação:", userError);
         toast({
           title: "Erro",
           description: "Você precisa estar logado para estudar.",
@@ -160,14 +161,15 @@ export default function RankingEstudos() {
         return;
       }
 
-      const { data: tenantData, error: tenantError } = await supabase
+      // Buscar tenant_id diretamente da tabela users
+      const { data: userData, error: userDataError } = await supabase
         .from('users')
         .select('tenant_id')
         .eq('id', user.id)
         .single();
 
-      if (tenantError) {
-        console.error('Erro ao buscar tenant:', tenantError);
+      if (userDataError || !userData?.tenant_id) {
+        console.error("Erro ao buscar tenant:", userDataError);
         toast({
           title: "Erro",
           description: "Não foi possível verificar suas permissões.",
@@ -180,13 +182,16 @@ export default function RankingEstudos() {
         .from('study_sessions')
         .insert({
           user_id: user.id,
-          tenant_id: tenantData.tenant_id,
+          tenant_id: userData.tenant_id,
           start_time: new Date().toISOString()
         })
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro ao inserir sessão:", error);
+        throw error;
+      }
 
       setCurrentSession(data);
       setIsStudying(true);

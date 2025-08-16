@@ -50,21 +50,26 @@ export default function Topics() {
 
     setIsCreating(true);
     try {
-      const [{ data: userRes }, { data: tenantRes }] = await Promise.all([
-        supabase.auth.getUser(),
-        supabase.rpc("current_user_tenant"),
-      ]);
-      const user = userRes.user;
-      const tenantId = tenantRes as unknown as string | null;
-      
-      if (!user || !tenantId) {
-        throw new Error("Sessão inválida ou tenant não encontrado.");
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        throw new Error("Usuário não autenticado. Faça login novamente.");
+      }
+
+      // Buscar tenant_id diretamente da tabela users
+      const { data: userData, error: userDataError } = await supabase
+        .from('users')
+        .select('tenant_id')
+        .eq('id', user.id)
+        .single();
+
+      if (userDataError || !userData?.tenant_id) {
+        throw new Error("Usuário não tem tenant associado. Entre em contato com o suporte.");
       }
 
       const { error } = await supabase.from("topics").insert({
         title: newTitle,
         description: newDescription || null,
-        tenant_id: tenantId,
+        tenant_id: userData.tenant_id,
         created_by: user.id,
       });
 
@@ -76,6 +81,7 @@ export default function Topics() {
       setDialogOpen(false);
       await loadTopics();
     } catch (err: any) {
+      console.error("Erro ao criar tópico:", err);
       toast({ title: "Erro ao criar tópico", description: err.message ?? "Tente novamente.", variant: "destructive" });
     } finally {
       setIsCreating(false);
