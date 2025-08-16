@@ -86,14 +86,19 @@ export default function Playlists() {
           <div className="max-w-md mx-auto text-center space-y-6">
             <div className="p-8">
               <Music className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Conecte ao Spotify</h2>
+              <h2 className="text-xl font-semibold mb-2">Spotify não configurado</h2>
               <p className="text-muted-foreground mb-6">
-                Para ver suas playlists, você precisa conectar sua conta do Spotify.
+                Para usar o Spotify, é necessário configurar as credenciais da API do Spotify.
               </p>
-              <Button onClick={connectSpotify} className="w-full">
-                <Music className="h-4 w-4 mr-2" />
-                Conectar Spotify
-              </Button>
+              <div className="text-left bg-muted p-4 rounded-lg text-sm">
+                <p className="font-medium mb-2">Para configurar:</p>
+                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
+                  <li>Acesse o <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Spotify Developer Dashboard</a></li>
+                  <li>Crie um novo app</li>
+                  <li>Configure as URLs de redirecionamento</li>
+                  <li>Adicione as credenciais ao projeto</li>
+                </ol>
+              </div>
             </div>
           </div>
         </main>
