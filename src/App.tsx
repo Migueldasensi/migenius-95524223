@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import SplashScreen from "@/components/SplashScreen";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -18,6 +19,11 @@ import AdminUsers from "./pages/AdminUsers";
 import WeeklyReports from "./pages/WeeklyReports";
 import IANutricional from "./pages/IANutricional";
 import RankingEstudos from "./pages/RankingEstudos";
+
+// Lazy load new features
+const Playlists = lazy(() => import("./pages/Playlists"));
+const PlaylistDetail = lazy(() => import("./pages/PlaylistDetail"));
+const Chats = lazy(() => import("./pages/Chats"));
 
 const queryClient = new QueryClient();
 
@@ -48,6 +54,39 @@ const App = () => {
           <Route path="/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
           <Route path="/admin/leaderboard" element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute><AdminUsers /></ProtectedRoute>} />
+
+          {/* Spotify Routes (Feature Flag) */}
+          {isFeatureEnabled('spotify') && (
+            <>
+              <Route path="/playlists" element={
+                <ProtectedRoute>
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <Playlists />
+                  </Suspense>
+                </ProtectedRoute>
+              } />
+              <Route path="/playlist/:id" element={
+                <ProtectedRoute>
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <PlaylistDetail />
+                  </Suspense>
+                </ProtectedRoute>
+              } />
+            </>
+          )}
+
+          {/* Social Chat Routes (Feature Flag) */}
+          {isFeatureEnabled('socialChat') && (
+            <>
+              <Route path="/chats" element={
+                <ProtectedRoute>
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <Chats />
+                  </Suspense>
+                </ProtectedRoute>
+              } />
+            </>
+          )}
 
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

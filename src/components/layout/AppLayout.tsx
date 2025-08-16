@@ -2,6 +2,8 @@ import { ReactNode, useEffect } from "react";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarInset, SidebarGroup, SidebarGroupLabel, SidebarGroupContent, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import ThemeToggle from "@/components/ThemeToggle";
+import DynamicIsland from "@/components/DynamicIsland";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 import { supabase } from "@/integrations/supabase/client";
 
 interface AppLayoutProps {
@@ -20,6 +22,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <SidebarProvider>
+      {isFeatureEnabled('dynamicIsland') && <DynamicIsland />}
       <div className="min-h-screen flex w-full">
         <Sidebar collapsible="offcanvas">
           <AppSidebar />
