@@ -88,9 +88,10 @@ export default function RankingEstudos() {
         .select(`
           user_id,
           total_minutes,
-          users!inner(display_name, email)
+          users!inner(display_name, email, tenant_id)
         `)
-        .not('end_time', 'is', null);
+        .not('end_time', 'is', null)
+        .eq('users.tenant_id', (await supabase.from('users').select('tenant_id').eq('id', user.id).single()).data?.tenant_id);
 
       if (error) throw error;
 
