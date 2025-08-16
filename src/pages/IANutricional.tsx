@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Brain, Sparkles } from "lucide-react";
+import { Loader2, Brain, Sparkles, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -10,6 +10,10 @@ export default function IANutricional() {
   const [content, setContent] = useState("");
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  const goBack = () => {
+    window.history.back();
+  };
 
   const handleSubmit = async () => {
     if (!content.trim()) {
@@ -55,15 +59,23 @@ export default function IANutricional() {
     <div className="container mx-auto p-4 max-w-4xl">
       <div className="space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Brain className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">IA Nutricional</h1>
-            <Sparkles className="h-8 w-8 text-primary" />
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" onClick={goBack}>
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Voltar
+            </Button>
           </div>
-          <p className="text-muted-foreground text-lg">
-            Descubra como qualquer assunto pode potencializar seus estudos e memória
-          </p>
+          <div className="text-center space-y-2">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Brain className="h-8 w-8 text-primary" />
+              <h1 className="text-3xl font-bold text-foreground">IA Nutricional</h1>
+              <Sparkles className="h-8 w-8 text-primary" />
+            </div>
+            <p className="text-muted-foreground text-lg">
+              Descubra como qualquer assunto pode potencializar seus estudos e memória
+            </p>
+          </div>
         </div>
 
         {/* Input Section */}
