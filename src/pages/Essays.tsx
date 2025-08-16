@@ -142,9 +142,31 @@ Seja detalhado e construtivo na correção.`;
 
       if (error) throw error;
 
-      // Extrair nota da resposta (buscar por padrão de número)
-      const noteMatch = data.response.match(/(?:nota|pontos?|score).*?(\d{1,4})/i);
-      const score = noteMatch ? parseInt(noteMatch[1]) : null;
+      // Extrair nota da resposta com múltiplos padrões
+      let score = null;
+      const response = data.response;
+      
+      // Padrões para capturar nota
+      const patterns = [
+        /(?:nota|score|pontuação).*?(\d{1,4})/i,
+        /(\d{1,4}).*?(?:pontos?|\/10|\/1000)/i,
+        /\*\*nota.*?(\d{1,4})\*\*/i,
+        /nota.*?(\d{1,4})/i
+      ];
+      
+      for (const pattern of patterns) {
+        const match = response.match(pattern);
+        if (match) {
+          const extractedScore = parseInt(match[1]);
+          // Se a nota for maior que 10, assumir que é de 1000, senão converter para 1000
+          score = extractedScore > 10 ? extractedScore : extractedScore * 100;
+          console.log('Nota extraída:', extractedScore, 'convertida para:', score);
+          break;
+        }
+      }
+      
+      console.log('Resposta da IA:', response);
+      console.log('Score final:', score);
 
       await supabase.from("essays").update({
         status: "corrected",
