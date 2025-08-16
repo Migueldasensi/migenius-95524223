@@ -41,11 +41,12 @@ class SpotifyService {
   private tokenExpiry: number | null = null;
 
   private get clientId() {
-    return import.meta.env.VITE_SPOTIFY_CLIENT_ID;
+    // Use a placeholder client ID for now - user needs to configure
+    return 'your-spotify-client-id';
   }
 
   private get redirectUri() {
-    return `${window.location.origin}/spotify/callback`;
+    return `${window.location.origin}/playlists`;
   }
 
   // Generate PKCE challenge
@@ -198,8 +199,8 @@ class SpotifyService {
   }
 
   isConnected(): boolean {
-    const stored = localStorage.getItem('spotify_tokens');
-    return !!stored && !!this.accessToken;
+    // For now, always return false since Spotify requires configuration
+    return false;
   }
 
   disconnect(): void {

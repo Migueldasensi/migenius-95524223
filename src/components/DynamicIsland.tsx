@@ -21,6 +21,21 @@ export default function DynamicIsland({ className = "" }: DynamicIslandProps) {
     return null;
   }
 
+  // Demo effect - show notification after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setState({ 
+        type: 'notification', 
+        data: { title: 'Bem-vindo!', message: 'Dynamic Island ativada ✨' }
+      });
+      
+      // Auto dismiss after 3 seconds
+      setTimeout(() => setState({ type: 'idle' }), 3000);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleTap = () => {
     if (state.type !== 'idle') {
       setIsExpanded(!isExpanded);
