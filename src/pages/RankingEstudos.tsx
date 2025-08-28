@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Play, Square, Trophy, Clock, Users, Medal, Crown, ArrowLeft } from "lucide-react";
+import { StudyTimer } from "@/components/StudyTimer";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -12,6 +13,13 @@ interface StudySession {
   start_time: string;
   end_time?: string;
   total_minutes: number;
+}
+
+interface TimeDisplay {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
 }
 
 interface RankingUser {
@@ -25,7 +33,7 @@ interface RankingUser {
 export default function RankingEstudos() {
   const [isStudying, setIsStudying] = useState(false);
   const [currentSession, setCurrentSession] = useState<StudySession | null>(null);
-  const [studyTime, setStudyTime] = useState(0);
+  const [studyTime, setStudyTime] = useState(0); // em segundos
   const [ranking, setRanking] = useState<RankingUser[]>([]);
   const [userPosition, setUserPosition] = useState<number>(0);
   const [loading, setLoading] = useState(false);
@@ -45,8 +53,8 @@ export default function RankingEstudos() {
       interval = setInterval(() => {
         const startTime = new Date(currentSession.start_time).getTime();
         const now = new Date().getTime();
-        const diffMinutes = Math.floor((now - startTime) / (1000 * 60));
-        setStudyTime(diffMinutes);
+        const diffSeconds = Math.floor((now - startTime) / 1000);
+        setStudyTime(diffSeconds);
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -72,8 +80,8 @@ export default function RankingEstudos() {
         setIsStudying(true);
         const startTime = new Date(data[0].start_time).getTime();
         const now = new Date().getTime();
-        const diffMinutes = Math.floor((now - startTime) / (1000 * 60));
-        setStudyTime(diffMinutes);
+        const diffSeconds = Math.floor((now - startTime) / 1000);
+        setStudyTime(diffSeconds);
       }
     } catch (error) {
       console.error('Erro ao verificar sessão ativa:', error);
@@ -86,34 +94,48 @@ export default function RankingEstudos() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      // Buscar ranking com total de minutos por usuário
+      // Buscar tenant_id do usuário atual
+      const { data: userData } = await supabase
+        .from('users')
+        .select('tenant_id')
+        .eq('id', user.id)
+        .single();
+
+      if (!userData?.tenant_id) return;
+
+      // Buscar todas as sessões de estudo finalizadas do tenant
       const { data, error } = await supabase
         .from('study_sessions')
-        .select(`
-          user_id,
-          total_minutes,
-          users!inner(display_name, email, tenant_id)
-        `)
+        .select('user_id, total_minutes')
         .not('end_time', 'is', null)
-        .eq('users.tenant_id', (await supabase.from('users').select('tenant_id').eq('id', user.id).single()).data?.tenant_id);
+        .eq('tenant_id', userData.tenant_id);
 
       if (error) throw error;
+
+      // Buscar informações dos usuários
+      const { data: usersData, error: usersError } = await supabase
+        .from('users')
+        .select('id, display_name, email')
+        .eq('tenant_id', userData.tenant_id);
+
+      if (usersError) throw usersError;
 
       // Agrupar por usuário e somar total de minutos
       const userTotals = new Map<string, { display_name: string; email: string; total_minutes: number }>();
       
       data?.forEach((session: any) => {
         const userId = session.user_id;
+        const userData = usersData?.find(u => u.id === userId);
         const existing = userTotals.get(userId);
-        const displayName = session.users?.display_name || session.users?.email || 'Usuário';
+        const displayName = userData?.display_name || userData?.email || 'Usuário';
         
         if (existing) {
-          existing.total_minutes += session.total_minutes;
+          existing.total_minutes += session.total_minutes || 0;
         } else {
           userTotals.set(userId, {
             display_name: displayName,
-            email: session.users?.email || '',
-            total_minutes: session.total_minutes
+            email: userData?.email || '',
+            total_minutes: session.total_minutes || 0
           });
         }
       });
@@ -253,9 +275,13 @@ export default function RankingEstudos() {
   };
 
   const formatTime = (minutes: number) => {
-    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(minutes / (24 * 60));
+    const hours = Math.floor((minutes % (24 * 60)) / 60);
     const mins = minutes % 60;
-    if (hours > 0) {
+    
+    if (days > 0) {
+      return `${days}d ${hours}h ${mins}m`;
+    } else if (hours > 0) {
       return `${hours}h ${mins}m`;
     }
     return `${mins}m`;
@@ -321,8 +347,8 @@ export default function RankingEstudos() {
               {isStudying ? "Estudando agora" : "Iniciar sessão de estudo"}
             </CardTitle>
             {isStudying && (
-              <CardDescription className="text-2xl font-bold text-primary">
-                {formatTime(studyTime)}
+              <CardDescription>
+                <StudyTimer seconds={studyTime} className="text-primary justify-center" />
               </CardDescription>
             )}
           </CardHeader>

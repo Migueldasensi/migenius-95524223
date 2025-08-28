@@ -121,24 +121,8 @@ export default function Essays() {
       console.log('Essay ID:', essayId);
       console.log('Content length:', essayContent.length);
       
-      const prompt = `Analise e corrija esta redação seguindo os critérios do ENEM:
-
-REDAÇÃO A CORRIGIR:
-${essayContent}
-
-Por favor, forneça:
-1. Nota geral (0-1000 pontos)
-2. Análise detalhada por competência:
-   - Competência 1: Domínio da norma padrão
-   - Competência 2: Compreensão do tema
-   - Competência 3: Argumentação
-   - Competência 4: Coesão e coerência  
-   - Competência 5: Proposta de intervenção
-3. Pontos fortes
-4. Pontos a melhorar
-5. Sugestões específicas
-
-Seja detalhado e construtivo na correção.`;
+      // Use o conteúdo diretamente, pois a edge function já tem o prompt formatado
+      const prompt = essayContent;
 
       console.log('Prompt enviado:', prompt.substring(0, 200) + '...');
 
@@ -161,25 +145,38 @@ Seja detalhado e construtivo na correção.`;
       }
 
       console.log('=== PROCESSANDO RESPOSTA ===');
-      // Extrair nota da resposta com múltiplos padrões
+      // Extrair nota da resposta
       let score = null;
       const response = data.response;
       
-      // Padrões para capturar nota
-      const patterns = [
-        /(?:nota|score|pontuação).*?(\d{1,4})/i,
-        /(\d{1,4}).*?(?:pontos?|\/10|\/1000)/i,
-        /\*\*nota.*?(\d{1,4})\*\*/i,
-        /nota.*?(\d{1,4})/i
+      console.log('Primeira linha da resposta:', response.split('\n')[0]);
+      
+      // Padrões mais específicos para capturar a nota no formato NOTA: XXX
+      const scorePatterns = [
+        /^NOTA[:\s]*(\d+)/i,
+        /^Nota[:\s]*(\d+)/i,
+        /^SCORE[:\s]*(\d+)/i,
+        /NOTA[:\s]*(\d+)/i,
+        /Nota[:\s]*(\d+)/i,
+        /SCORE[:\s]*(\d+)/i,
+        /pontuação[:\s]*(\d+)/i,
+        /(\d+)[\/\s]*(?:pontos?|pts?)/i,
+        /(\d+)[\/\s]*1000/i,
+        /avaliação[:\s]*(\d+)/i
       ];
       
-      for (const pattern of patterns) {
+      for (const pattern of scorePatterns) {
         const match = response.match(pattern);
-        if (match) {
-          const extractedScore = parseInt(match[1]);
-          // Se a nota for maior que 10, assumir que é de 1000, senão converter para 1000
-          score = extractedScore > 10 ? extractedScore : extractedScore * 100;
-          console.log('Nota extraída:', extractedScore, 'convertida para:', score);
+        if (match && match[1]) {
+          let extractedScore = parseInt(match[1]);
+          
+          // Garantir que está na escala 0-1000
+          if (extractedScore <= 10) {
+            extractedScore = extractedScore * 100;
+          }
+          
+          score = Math.min(1000, Math.max(0, extractedScore));
+          console.log(`Nota extraída com padrão ${pattern.source}: ${score}`);
           break;
         }
       }

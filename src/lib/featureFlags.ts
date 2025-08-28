@@ -1,9 +1,9 @@
 // Feature flags for incremental rollout
 export const featureFlags = {
-  spotify: import.meta.env.VITE_ENABLE_SPOTIFY === 'true',
-  socialChat: import.meta.env.VITE_ENABLE_SOCIAL_CHAT === 'true',
-  dynamicIsland: import.meta.env.VITE_ENABLE_DYNAMIC_ISLAND === 'true',
-  enhancedProfile: import.meta.env.VITE_ENABLE_ENHANCED_PROFILE === 'true',
+  spotify: true, // Habilitado por padrão
+  socialChat: true, // Habilitado por padrão
+  dynamicIsland: true, // Habilitado por padrão
+  enhancedProfile: true, // Habilitado por padrão
 } as const;
 
 export type FeatureFlag = keyof typeof featureFlags;
