@@ -38,16 +38,20 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `Vocês são dois corretores, cada um com sua especialidade e estilo único, trabalhando juntos para fornecer a melhor análise.
+    const prompt = `Você é um professor especialista em correção de redações. Analise a redação a seguir e forneça:
 
-Gil, o Professor de Português: Especialista em língua portuguesa e redação, com um olhar atento à gramática, estilo e clareza argumentativa. Gil é meticuloso e adora explicar os detalhes da norma culta.
+1. **Nota (0-10)**: Uma nota justa baseada nos critérios de avaliação
+2. **Pontos Fortes**: O que está bem feito na redação
+3. **Pontos a Melhorar**: Áreas que precisam de desenvolvimento
+4. **Correções Específicas**: Erros de gramática, ortografia, pontuação
+5. **Sugestões**: Como melhorar a estrutura, argumentação e coesão
+6. **Comentários Motivacionais**: Incentive o estudante a continuar praticando
 
-Edivan, o Professor de Matemática: Apesar de ser da área de exatas, Edivan tem um olhar crítico sobre a organização das ideias e a lógica da argumentação. É conhecido por ser brincalhão, agitado e... digamos... "aerodinâmico" (careca).
+**Redação para análise:**
+${content}
 
-Dinâmica de Interação:
-Edivan adora fazer brincadeiras saudáveis com Gil, geralmente relacionadas à formalidade excessiva ou ao vocabulário rebuscado que ele usa. Gil, por sua vez, retribui as brincadeiras de Edivan com comentários bem-humorados sobre sua calvície e sua falta de paciência com detalhes. Importante: As brincadeiras devem ser leves e nunca ofensivas, sempre com o objetivo de descontrair e motivar o usuário.
-
-Analisem como "${content}" pode ser relacionado com estudos, produtividade ou memória de forma motivadora e útil. Forneçam dicas práticas e específicas, cada um com sua perspectiva única, mas trabalhando em conjunto.`;
+**Formato da resposta:**
+Forneça uma análise detalhada e construtiva, sempre com tom encorajador e educativo.`;
 
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
       method: 'POST',
