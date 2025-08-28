@@ -62,6 +62,82 @@ export type Database = {
           },
         ]
       }
+      chat_members: {
+        Row: {
+          chat_id: string | null
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          chat_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          chat_id?: string | null
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_members_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chats: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_group: boolean | null
+          name: string | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_group?: boolean | null
+          name?: string | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_group?: boolean | null
+          name?: string | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chats_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       countdowns: {
         Row: {
           color: string | null
@@ -171,6 +247,120 @@ export type Database = {
           },
         ]
       }
+      gamification: {
+        Row: {
+          best_streak_days: number | null
+          created_at: string | null
+          last_streak_date: string | null
+          streak_days: number | null
+          tier: string | null
+          updated_at: string | null
+          user_id: string
+          xp_total: number | null
+        }
+        Insert: {
+          best_streak_days?: number | null
+          created_at?: string | null
+          last_streak_date?: string | null
+          streak_days?: number | null
+          tier?: string | null
+          updated_at?: string | null
+          user_id: string
+          xp_total?: number | null
+        }
+        Update: {
+          best_streak_days?: number | null
+          created_at?: string | null
+          last_streak_date?: string | null
+          streak_days?: number | null
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string
+          xp_total?: number | null
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          chat_id: string | null
+          content: string | null
+          created_at: string | null
+          duration_ms: number | null
+          edited_at: string | null
+          id: string
+          media_thumb_url: string | null
+          media_url: string | null
+          reply_to: string | null
+          status: string | null
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          chat_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          edited_at?: string | null
+          id?: string
+          media_thumb_url?: string | null
+          media_url?: string | null
+          reply_to?: string | null
+          status?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          chat_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          edited_at?: string | null
+          id?: string
+          media_thumb_url?: string | null
+          media_url?: string | null
+          reply_to?: string | null
+          status?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "chats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      presence: {
+        Row: {
+          is_online: boolean | null
+          last_seen: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          is_online?: boolean | null
+          last_seen?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          is_online?: boolean | null
+          last_seen?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       study_sessions: {
         Row: {
           created_at: string
@@ -272,6 +462,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          links: Json | null
+          privacy_streak_visibility: string | null
+          show_spotify_connection: boolean | null
+          spotify_display_name: string | null
+          spotify_id: string | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id: string
+          links?: Json | null
+          privacy_streak_visibility?: string | null
+          show_spotify_connection?: boolean | null
+          spotify_display_name?: string | null
+          spotify_id?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          links?: Json | null
+          privacy_streak_visibility?: string | null
+          show_spotify_connection?: boolean | null
+          spotify_display_name?: string | null
+          spotify_id?: string | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
