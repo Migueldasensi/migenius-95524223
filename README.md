@@ -195,5 +195,3 @@ npx cap open ios
 - **Errors**: Console logs + Supabase realtime
 
 ---
-
-**Criado com ❤️ usando Lovable**
