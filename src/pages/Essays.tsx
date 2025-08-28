@@ -117,6 +117,10 @@ export default function Essays() {
   const correctEssayWithAI = async (essayId: string, essayContent: string) => {
     setCorrectingAI(true);
     try {
+      console.log('=== INICIANDO CORREÇÃO COM IA ===');
+      console.log('Essay ID:', essayId);
+      console.log('Content length:', essayContent.length);
+      
       const prompt = `Analise e corrija esta redação seguindo os critérios do ENEM:
 
 REDAÇÃO A CORRIGIR:
@@ -136,12 +140,27 @@ Por favor, forneça:
 
 Seja detalhado e construtivo na correção.`;
 
+      console.log('Prompt enviado:', prompt.substring(0, 200) + '...');
+
       const { data, error } = await supabase.functions.invoke('ia-nutricional', {
         body: { content: prompt }
       });
 
-      if (error) throw error;
+      console.log('=== RESPOSTA DA EDGE FUNCTION ===');
+      console.log('Error:', error);
+      console.log('Data:', data);
 
+      if (error) {
+        console.error('Erro ao chamar edge function:', error);
+        throw error;
+      }
+
+      if (!data || !data.response) {
+        console.error('Resposta da IA vazia ou inválida:', data);
+        throw new Error('Resposta da IA está vazia');
+      }
+
+      console.log('=== PROCESSANDO RESPOSTA ===');
       // Extrair nota da resposta com múltiplos padrões
       let score = null;
       const response = data.response;
@@ -165,14 +184,21 @@ Seja detalhado e construtivo na correção.`;
         }
       }
       
-      console.log('Resposta da IA:', response);
+      console.log('Resposta da IA:', response.substring(0, 500) + '...');
       console.log('Score final:', score);
 
-      await supabase.from("essays").update({
+      console.log('=== ATUALIZANDO DATABASE ===');
+      const { error: updateError } = await supabase.from("essays").update({
         status: "corrected",
         score: score,
       }).eq("id", essayId);
 
+      if (updateError) {
+        console.error('Erro ao atualizar essay:', updateError);
+        throw updateError;
+      }
+
+      console.log('=== CORREÇÃO CONCLUÍDA ===');
       toast({ 
         title: "Correção concluída!", 
         description: score ? `Nota: ${score}/1000 pontos` : "Correção disponível"
@@ -180,7 +206,7 @@ Seja detalhado e construtivo na correção.`;
       
       await loadEssays();
     } catch (err: any) {
-      console.error("Erro na correção IA:", err);
+      console.error('=== ERRO NA CORREÇÃO ===', err);
       toast({ title: "Erro na correção", description: err.message ?? "Tente novamente.", variant: "destructive" });
       await supabase.from("essays").update({ status: "error" }).eq("id", essayId);
     } finally {
