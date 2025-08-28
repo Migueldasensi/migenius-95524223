@@ -195,3 +195,5 @@ npx cap open ios
 - **Errors**: Console logs + Supabase realtime
 
 ---
+
+Miguel da sensi owner. 
