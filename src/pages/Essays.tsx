@@ -45,38 +45,70 @@ export default function Essays() {
   }, []);
 
   const submitEssay = async (autoCorrect = false) => {
+    // Verificar se tem conteúdo OU imagem
+    if (!content.trim() && !imageFile) {
+      toast({ title: "Atenção", description: "Digite um texto ou envie uma foto da redação.", variant: "destructive" });
+      return;
+    }
+
     setSubmitting(true);
     try {
-      const [{ data: userRes }, { data: tenantRes }] = await Promise.all([
-        supabase.auth.getUser(),
-        supabase.rpc("current_user_tenant"),
-      ]);
-      const user = userRes.user;
-      const tenantId = tenantRes as unknown as string | null;
-      if (!user || !tenantId) {
-        throw new Error("Sessão inválida ou tenant não encontrado.");
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      if (userError || !user) {
+        console.error("Erro de autenticação:", userError);
+        throw new Error("Usuário não autenticado. Faça login novamente.");
+      }
+
+      // Buscar tenant_id diretamente da tabela users
+      const { data: userData, error: userDataError } = await supabase
+        .from('users')
+        .select('tenant_id')
+        .eq('id', user.id)
+        .single();
+
+      if (userDataError || !userData?.tenant_id) {
+        console.error("Erro ao buscar tenant:", userDataError);
+        throw new Error("Usuário não tem tenant associado. Entre em contato com o suporte.");
+      }
+
+      let finalContent = content;
+      
+      // Se tem apenas imagem, usar placeholder
+      if (!content.trim() && imageFile) {
+        finalContent = `[Redação enviada via imagem: ${imageFile.name}]\n\nOCR será implementado em breve para extrair o texto automaticamente.`;
       }
 
       const { data: essayData, error } = await supabase.from("essays").insert({
         user_id: user.id,
-        tenant_id: tenantId,
-        content,
+        tenant_id: userData.tenant_id,
+        content: finalContent,
         topic_id: topicFromUrl,
         status: autoCorrect ? "correcting" : "submitted",
       }).select().single();
       
-      if (error) throw error;
-      
-      if (autoCorrect) {
-        await correctEssayWithAI(essayData.id, content);
+      if (error) {
+        console.error("Erro ao inserir essay:", error);
+        throw error;
       }
       
-      toast({ title: "Redação enviada", description: autoCorrect ? "Redação enviada para correção automática." : "Sua redação foi submetida." });
+      if (autoCorrect && finalContent.trim()) {
+        await correctEssayWithAI(essayData.id, finalContent);
+      }
+      
+      toast({ 
+        title: "Redação enviada", 
+        description: autoCorrect ? "Redação enviada para correção automática." : "Sua redação foi submetida." 
+      });
       setContent("");
       setImageFile(null);
       await loadEssays();
     } catch (err: any) {
-      toast({ title: "Erro ao enviar", description: err.message ?? "Tente novamente.", variant: "destructive" });
+      console.error("Erro completo:", err);
+      toast({ 
+        title: "Erro ao enviar", 
+        description: err.message ?? "Tente novamente.", 
+        variant: "destructive" 
+      });
     } finally {
       setSubmitting(false);
     }
@@ -117,7 +149,6 @@ Seja detalhado e construtivo na correção.`;
       await supabase.from("essays").update({
         status: "corrected",
         score: score,
-        // Salvamos o feedback em um campo metadata ou similar
       }).eq("id", essayId);
 
       toast({ 
@@ -127,6 +158,7 @@ Seja detalhado e construtivo na correção.`;
       
       await loadEssays();
     } catch (err: any) {
+      console.error("Erro na correção IA:", err);
       toast({ title: "Erro na correção", description: err.message ?? "Tente novamente.", variant: "destructive" });
       await supabase.from("essays").update({ status: "error" }).eq("id", essayId);
     } finally {
@@ -288,7 +320,7 @@ Seja detalhado e construtivo na correção.`;
             <div className="flex gap-2">
               <Button 
                 onClick={() => submitEssay(false)} 
-                disabled={submitting || content.trim().length === 0}
+                disabled={submitting || (!content.trim() && !imageFile)}
                 variant="outline"
                 className="flex-1"
               >
@@ -296,7 +328,7 @@ Seja detalhado e construtivo na correção.`;
               </Button>
               <Button 
                 onClick={() => submitEssay(true)} 
-                disabled={submitting || content.trim().length === 0}
+                disabled={submitting || (!content.trim() && !imageFile)}
                 className="flex-1"
               >
                 {submitting ? (
