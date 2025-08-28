@@ -57,7 +57,7 @@ const Index = () => {
     <main className="min-h-screen flex items-center justify-center bg-background">
       <section className="text-center space-y-4">
         <h1 className="text-4xl font-bold">Bem-vindo(a)!</h1>
-        <p className="text-xl text-muted-foreground">Você está autenticado{email ? ` como ${email}` : ""}.</p>
+        <p className="text-xl text-muted-foreground">Você está autenticado.</p>
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Button asChild>
             <Link to="/dashboard">Ir ao Dashboard</Link>
