@@ -10,12 +10,13 @@ const items = [
   { title: "Tópicos", url: "/topics", icon: BookOpen },
   { title: "Redações", url: "/essays", icon: FileText },
   { title: "Relatórios", url: "/reports", icon: Calendar },
-  { title: "Contagens", url: "/countdowns", icon: CalendarDays },
+  
   { title: "IA Nutricional", url: "/ia-nutricional", icon: Brain },
   { title: "Ranking de Estudos", url: "/ranking-estudos", icon: Timer },
   { title: "Configurações", url: "/settings", icon: Settings },
   { title: "Usuários (Admin)", url: "/admin/users", icon: Users },
   { title: "Leaderboard (Admin)", url: "/admin/leaderboard", icon: Trophy },
+  { title: "Contagens (Admin)", url: "/admin/countdowns", icon: CalendarDays },
 ];
 
 export function AppSidebar() {

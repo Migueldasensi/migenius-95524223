@@ -155,19 +155,27 @@ export default function RankingEstudos() {
         return;
       }
 
-      const tenantData = await supabase
+      const { data: tenantData, error: tenantError } = await supabase
         .from('users')
         .select('tenant_id')
         .eq('id', user.id)
         .single();
 
-      if (tenantData.error) throw tenantData.error;
+      if (tenantError) {
+        console.error('Erro ao buscar tenant:', tenantError);
+        toast({
+          title: "Erro",
+          description: "Não foi possível verificar suas permissões.",
+          variant: "destructive"
+        });
+        return;
+      }
 
       const { data, error } = await supabase
         .from('study_sessions')
         .insert({
           user_id: user.id,
-          tenant_id: tenantData.data.tenant_id,
+          tenant_id: tenantData.tenant_id,
           start_time: new Date().toISOString()
         })
         .select()
