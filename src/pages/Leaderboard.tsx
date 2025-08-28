@@ -3,7 +3,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import Seo from "@/components/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 interface UserRow {
   id: string;

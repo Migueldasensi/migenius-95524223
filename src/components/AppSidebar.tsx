@@ -3,7 +3,7 @@ import { Gauge, BookOpen, FileText, Trophy, LogOut, CalendarDays, Users, Setting
 import { SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 const items = [
   { title: "Dashboard", url: "/dashboard", icon: Gauge },
