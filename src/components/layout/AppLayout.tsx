@@ -22,7 +22,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <SidebarProvider>
-      {isFeatureEnabled('dynamicIsland') && <DynamicIsland />}
       <div className="min-h-screen flex w-full">
         <Sidebar collapsible="offcanvas">
           <AppSidebar />
