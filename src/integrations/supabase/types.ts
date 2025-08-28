@@ -64,8 +64,10 @@ export type Database = {
       }
       countdowns: {
         Row: {
+          color: string | null
           created_at: string
           created_by: string | null
+          description: string | null
           id: string
           target_at: string
           tenant_id: string
@@ -73,8 +75,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          color?: string | null
           created_at?: string
           created_by?: string | null
+          description?: string | null
           id?: string
           target_at: string
           tenant_id: string
@@ -82,8 +86,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          color?: string | null
           created_at?: string
           created_by?: string | null
+          description?: string | null
           id?: string
           target_at?: string
           tenant_id?: string
@@ -164,6 +170,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      study_sessions: {
+        Row: {
+          created_at: string
+          end_time: string | null
+          id: string
+          start_time: string
+          tenant_id: string
+          total_minutes: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          tenant_id: string
+          total_minutes?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string | null
+          id?: string
+          start_time?: string
+          tenant_id?: string
+          total_minutes?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       tenants: {
         Row: {
