@@ -24,6 +24,8 @@ import RankingEstudos from "./pages/RankingEstudos";
 const Playlists = lazy(() => import("./pages/Playlists"));
 const PlaylistDetail = lazy(() => import("./pages/PlaylistDetail"));
 const Chats = lazy(() => import("./pages/Chats"));
+const CreateGroup = lazy(() => import("./pages/CreateGroup"));
+const ChatDetail = lazy(() => import("./pages/ChatDetail"));
 
 const queryClient = new QueryClient();
 
@@ -82,6 +84,20 @@ const App = () => {
                 <ProtectedRoute>
                   <Suspense fallback={<div>Carregando...</div>}>
                     <Chats />
+                  </Suspense>
+                </ProtectedRoute>
+              } />
+              <Route path="/groups/new" element={
+                <ProtectedRoute>
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <CreateGroup />
+                  </Suspense>
+                </ProtectedRoute>
+              } />
+              <Route path="/chats/:id" element={
+                <ProtectedRoute>
+                  <Suspense fallback={<div>Carregando...</div>}>
+                    <ChatDetail />
                   </Suspense>
                 </ProtectedRoute>
               } />

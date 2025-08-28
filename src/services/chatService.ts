@@ -47,22 +47,30 @@ export interface Chat {
 
 class ChatService {
   async getUserChats(): Promise<Chat[]> {
-    const { data: chats, error } = await supabase
-      .from('chats')
-      .select(`
-        *,
-        members:chat_members(
-          id,
-          chat_id,
-          user_id,
-          role,
-          joined_at
-        )
-      `)
-      .order('updated_at', { ascending: false });
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
 
-    if (error) throw error;
-    return (chats || []) as Chat[];
+      const { data: chats, error } = await supabase
+        .from('chats')
+        .select(`
+          *,
+          chat_members!inner(
+            id,
+            user_id,
+            role,
+            joined_at
+          )
+        `)
+        .eq('chat_members.user_id', user.id)
+        .order('updated_at', { ascending: false });
+
+      if (error) throw error;
+      return (chats || []) as Chat[];
+    } catch (error) {
+      console.error('Error in getUserChats:', error);
+      throw error;
+    }
   }
 
   async getChat(chatId: string): Promise<Chat | null> {
